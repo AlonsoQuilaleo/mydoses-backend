@@ -1,0 +1,11 @@
+CC=gcc
+CFLAGS=-Wall -O2
+TARGET=doses
+
+all: $(TARGET)
+
+$(TARGET): src/doses.c
+	$(CC) $(CFLAGS) -o $(TARGET) src/doses.c
+
+clean:
+	rm -f $(TARGET)

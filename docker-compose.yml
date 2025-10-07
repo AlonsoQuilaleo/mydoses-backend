@@ -1,0 +1,34 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: mydoses-postgres
+    restart: always
+    environment:
+      POSTGRES_USER: mydoses
+      POSTGRES_PASSWORD: mydoses-password
+      POSTGRES_DB: mydoses_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./mydoses-backend/database/data:/var/lib/postgresql/data
+      - ./mydoses-backend/database/init.sql:/docker-entrypoint-initdb.d/init.sql
+
+  api-gateway:
+    build: ./mydoses-backend/api-gateway
+    container_name: mydoses-api
+    ports:
+      - "3000:3000"
+    depends_on:
+      - postgres
+    environment:
+      DATABASE_URL: postgres://mydoses:mydoses-password@postgres:5432/mydoses_db
+    volumes:
+      - ./mydoses-backend/api-gateway:/app
+
+  analytics:
+    build: ./mydoses-backend/analytics
+    container_name: mydoses-analytics
+    depends_on:
+      - postgres
+    volumes:
+      - ./mydoses-backend/analytics:/app
